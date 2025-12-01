@@ -27,18 +27,46 @@ func main() {
 			fmt.Println(err)
 		}
 
-		if isLeftspin(scanner.Text()) {
-			current = current - number
-		} else {
-			current = current + number
-		}
+		line := buildLine(current, number, isLeftspin(scanner.Text()))
+		current = line[len(line)-1]
 
-		if current == 0 || strings.HasSuffix(strconv.Itoa(current), "00") {
-			zeroHits++
-			current = 0
+		zeroes := checkZeroes(line)
+		zeroHits += zeroes
+	}
+
+	fmt.Println(zeroHits)
+}
+
+func checkZeroes(line []int) int {
+	zeroes := 0
+	for _, v := range line {
+		if v == 0 || strings.HasSuffix(strconv.Itoa(v), "00") {
+			zeroes++
 		}
 	}
-	fmt.Println(zeroHits)
+
+	return zeroes
+}
+
+func buildLine(start, spins int, isLeftspin bool) []int {
+	slice := []int{}
+	toAdd := start
+
+	for range spins {
+		if isLeftspin {
+			toAdd--
+		} else {
+			toAdd++
+		}
+
+		if toAdd == 0 || strings.HasSuffix(strconv.Itoa(toAdd), "00") {
+			toAdd = 0
+		}
+
+		slice = append(slice, toAdd)
+	}
+
+	return slice
 }
 
 func isLeftspin(line string) bool {
