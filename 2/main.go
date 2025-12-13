@@ -70,7 +70,7 @@ func checkDuplicates(data map[int][]int) int {
 	invalidIDs := 0
 	for _, slice := range data {
 		for _, v := range slice {
-			if checkDuplicateOccurences(v) {
+			if hasDuplicateOccurences(v) {
 				invalidIDs += v
 			}
 		}
@@ -79,10 +79,48 @@ func checkDuplicates(data map[int][]int) int {
 	return invalidIDs
 }
 
-func checkDuplicateOccurences(num int) bool {
+func hasDuplicateOccurences(num int) bool {
 	strNum := strconv.Itoa(num)
 
 	halfword := len(strNum) / 2
 
-	return strNum[:halfword] == strNum[halfword:]
+	if strNum[:halfword] == strNum[halfword:] {
+		return true
+	}
+
+	return splitAndCheckForRepeats(strNum)
+}
+
+func splitAndCheckForRepeats(fullWord string) bool {
+	if len(fullWord) == 1 {
+		return false
+	}
+
+	if strings.Count(fullWord, string(fullWord[0])) == len(fullWord) {
+		return true
+	}
+
+	testWordLen := 0
+	if len(fullWord)%3 == 0 {
+		testWordLen = len(fullWord) / 3
+	}
+
+	for i := 0; i < testWordLen; i++ {
+		testWord := fullWord[testWordLen*i : testWordLen*(i+1)]
+		if strings.Count(fullWord, testWord) > 2 {
+			return true
+		}
+	}
+	testWordLen = len(fullWord) / 5
+	if testWordLen == 1 {
+		testWordLen = 2
+	}
+	for i := 0; i < testWordLen; i++ {
+		testWord := fullWord[testWordLen*i : testWordLen*(i+1)]
+		if strings.Count(fullWord, testWord) > 4 {
+			return true
+		}
+	}
+
+	return false
 }
